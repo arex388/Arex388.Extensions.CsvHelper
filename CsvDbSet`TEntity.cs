@@ -20,6 +20,8 @@ namespace Arex388.Extensions.CsvHelper {
         private Type ClassMap => _classMap ??= _classMaps.SingleOrDefault(
             cm => cm.BaseType == ClassMapType);
 
+        private int HashCode;
+
         public CsvDbSet(
             CsvDbContextOptions options,
             IList<Type> classMaps) {
@@ -33,6 +35,9 @@ namespace Arex388.Extensions.CsvHelper {
         //  Utilities
         //  ========================================================================
 
+        private int GetHashCodeSum() => this.Sum(
+            _ => _.GetHashCode());
+
         private void Load() {
             using var reader = new StreamReader(_path);
             using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
@@ -42,15 +47,25 @@ namespace Arex388.Extensions.CsvHelper {
             var records = csv.GetRecords<TEntity>();
 
             AddRange(records);
+
+            HashCode = GetHashCodeSum();
         }
 
         private void Save() {
+            var hashCode = GetHashCodeSum();
+
+            if (hashCode == HashCode) {
+                return;
+            }
+
             using var writer = new StreamWriter(_path);
             using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
 
             csv.Configuration.RegisterClassMap(ClassMap);
 
             csv.WriteRecords(this);
+
+            HashCode = GetHashCodeSum();
         }
     }
 }

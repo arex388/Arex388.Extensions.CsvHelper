@@ -6,6 +6,8 @@ using System.Reflection;
 
 namespace Arex388.Extensions.CsvHelper {
     public abstract class CsvDbContext {
+        private const string SaveMethod = "Save";
+
         private readonly CsvDbContextOptions _options;
 
         private Type _csvDbSetType;
@@ -33,7 +35,7 @@ namespace Arex388.Extensions.CsvHelper {
             foreach (var csvDbSet in CsvDbSets) {
                 var instance = csvDbSet.GetValue(this, null);
                 var saveMethod = csvDbSet.PropertyType.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly).Single(
-                    m => m.Name == "Save");
+                    m => m.Name == SaveMethod);
 
                 saveMethod.Invoke(instance, null);
             }
