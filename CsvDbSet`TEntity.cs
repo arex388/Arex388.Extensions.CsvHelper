@@ -20,7 +20,7 @@ namespace Arex388.Extensions.CsvHelper {
         private Type ClassMap => _classMap ??= _classMaps.SingleOrDefault(
             cm => cm.BaseType == ClassMapType);
 
-        private int HashCode;
+        private int _hashCode;
 
         public CsvDbSet(
             CsvDbContextOptions options,
@@ -48,13 +48,13 @@ namespace Arex388.Extensions.CsvHelper {
 
             AddRange(records);
 
-            HashCode = GetHashCodeSum();
+            _hashCode = GetHashCodeSum();
         }
 
         private void Save() {
             var hashCode = GetHashCodeSum();
 
-            if (hashCode == HashCode) {
+            if (hashCode == _hashCode) {
                 return;
             }
 
@@ -65,7 +65,7 @@ namespace Arex388.Extensions.CsvHelper {
 
             csv.WriteRecords(this);
 
-            HashCode = GetHashCodeSum();
+            _hashCode = GetHashCodeSum();
         }
     }
 }
