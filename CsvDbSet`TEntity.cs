@@ -10,49 +10,32 @@ namespace Arex388.Extensions.CsvHelper {
     public class CsvDbSet<TEntity> :
         List<TEntity>,
         ICsvDbSet {
-        private readonly IList<Type> _classMaps;
+        private readonly Type _classMap;
         private readonly string _path;
 
-        private Type _classMapType;
-        private Type ClassMapType => _classMapType ??= typeof(ClassMap<TEntity>);
-
-        private Type _classMap;
-        private Type ClassMap => _classMap ??= _classMaps.SingleOrDefault(
-            cm => cm.BaseType == ClassMapType);
-
-        private int _hashCode;
+        private long _hashCode;
 
         public CsvDbSet(
             CsvDbContextOptions options,
-            IList<Type> classMaps) {
-            _classMaps = classMaps;
+            IEnumerable<Type> classMaps) {
+            _classMap = classMaps.SingleOrDefault(
+                cm => cm.BaseType == typeof(ClassMap<TEntity>));
             _path = $"{options.Path}\\{typeof(TEntity).Name}s.csv";
 
-            Load();
-        }
-
-        //  ========================================================================
-        //  Utilities
-        //  ========================================================================
-
-        private int GetHashCodeSum() => this.Sum(
-            _ => _.GetHashCode());
-
-        private void Load() {
             using var reader = new StreamReader(_path);
             using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
-            csv.Configuration.RegisterClassMap(ClassMap);
+            csv.Context.RegisterClassMap(_classMap);
 
             var records = csv.GetRecords<TEntity>();
 
             AddRange(records);
 
-            _hashCode = GetHashCodeSum();
+            _hashCode = GetHashCodeAvg();
         }
 
-        private void Save() {
-            var hashCode = GetHashCodeSum();
+        public void Save() {
+            var hashCode = GetHashCodeAvg();
 
             if (hashCode == _hashCode) {
                 return;
@@ -61,11 +44,18 @@ namespace Arex388.Extensions.CsvHelper {
             using var writer = new StreamWriter(_path);
             using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
 
-            csv.Configuration.RegisterClassMap(ClassMap);
+            csv.Context.RegisterClassMap(_classMap);
 
             csv.WriteRecords(this);
 
-            _hashCode = GetHashCodeSum();
+            _hashCode = GetHashCodeAvg();
         }
+
+        //  ========================================================================
+        //  Utilities
+        //  ========================================================================
+
+        private int GetHashCodeAvg() => (int)this.Select(
+            _ => _.GetHashCode()).Average();
     }
 }
