@@ -7,3 +7,7 @@ Sometimes you really do not need a database for data storage. Installing, config
 I decided to experiment and remove the dependency on SQL Server and Entity Framework Core and started using CSV files. I still needed a way to read and write to those CSVs, so I made this pseudo-DbContext to give me this functionality. It has made managing the blog much easier and I am going to be using it in a couple of other projects that do not need a real database.
 
 Obviously if you are working on a real business project do not use this. Stick to the proper database setup. For simple projects however, this works fine.
+
+> **WARNING!**
+>
+> In version 1.0.9 I changed the `Save()` methods to `SaveAsync()`.

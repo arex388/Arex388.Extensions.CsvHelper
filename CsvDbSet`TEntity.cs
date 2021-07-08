@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Arex388.Extensions.CsvHelper {
     public class CsvDbSet<TEntity> :
@@ -34,7 +36,8 @@ namespace Arex388.Extensions.CsvHelper {
             _hashCode = GetHashCodeAvg();
         }
 
-        public void Save() {
+        public async Task SaveAsync(
+            CancellationToken cancellationToken) {
             var hashCode = GetHashCodeAvg();
 
             if (hashCode == _hashCode) {
@@ -46,7 +49,7 @@ namespace Arex388.Extensions.CsvHelper {
 
             csv.Context.RegisterClassMap(_classMap);
 
-            csv.WriteRecords(this);
+            await csv.WriteRecordsAsync(this, cancellationToken).ConfigureAwait(false);
 
             _hashCode = GetHashCodeAvg();
         }

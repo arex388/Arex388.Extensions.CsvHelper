@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Arex388.Extensions.CsvHelper {
     public abstract class CsvDbContext {
@@ -30,11 +32,12 @@ namespace Arex388.Extensions.CsvHelper {
 
         protected abstract void Relate();
 
-        public void Save() {
+        public async Task SaveAsync(
+            CancellationToken cancellationToken = default) {
             foreach (var csvDbSet in _csvDbSets) {
                 var instance = (ICsvDbSet)csvDbSet.GetValue(this, null);
 
-                instance.Save();
+                await instance.SaveAsync(cancellationToken).ConfigureAwait(false);
             }
         }
     }

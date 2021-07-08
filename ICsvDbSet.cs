@@ -1,5 +1,9 @@
-﻿namespace Arex388.Extensions.CsvHelper {
+﻿using System.Threading;
+using System.Threading.Tasks;
+
+namespace Arex388.Extensions.CsvHelper {
     internal interface ICsvDbSet {
-        void Save();
+        Task SaveAsync(
+            CancellationToken cancellationToken);
     }
 }
