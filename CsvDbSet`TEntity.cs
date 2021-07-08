@@ -58,7 +58,10 @@ namespace Arex388.Extensions.CsvHelper {
         //  Utilities
         //  ========================================================================
 
-        private int GetHashCodeAvg() => (int)this.Select(
-            _ => _.GetHashCode()).Average();
+        private int GetHashCodeAvg() =>
+            Count == 0
+                ? 0
+                : (int)this.Select(
+                    _ => _.GetHashCode()).Average();
     }
 }
