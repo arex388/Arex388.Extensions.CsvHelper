@@ -15,8 +15,6 @@ namespace Arex388.Extensions.CsvHelper {
         private readonly Type _classMap;
         private readonly string _path;
 
-        private long _hashCode;
-
         public CsvDbSet(
             CsvDbContextOptions options,
             IEnumerable<Type> classMaps) {
@@ -32,36 +30,16 @@ namespace Arex388.Extensions.CsvHelper {
             var records = csv.GetRecords<TEntity>();
 
             AddRange(records);
-
-            _hashCode = GetHashCodeAvg();
         }
 
         public async Task SaveAsync(
             CancellationToken cancellationToken) {
-            var hashCode = GetHashCodeAvg();
-
-            if (hashCode == _hashCode) {
-                return;
-            }
-
             using var writer = new StreamWriter(_path);
             using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
 
             csv.Context.RegisterClassMap(_classMap);
 
             await csv.WriteRecordsAsync(this, cancellationToken).ConfigureAwait(false);
-
-            _hashCode = GetHashCodeAvg();
         }
-
-        //  ========================================================================
-        //  Utilities
-        //  ========================================================================
-
-        private int GetHashCodeAvg() =>
-            Count == 0
-                ? 0
-                : (int)this.Select(
-                    _ => _.GetHashCode()).Average();
     }
 }
