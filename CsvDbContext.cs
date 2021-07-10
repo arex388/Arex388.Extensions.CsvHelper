@@ -39,6 +39,8 @@ namespace Arex388.Extensions.CsvHelper {
 
                 await instance.SaveAsync(cancellationToken).ConfigureAwait(false);
             }
+
+            Relate();
         }
     }
 }
