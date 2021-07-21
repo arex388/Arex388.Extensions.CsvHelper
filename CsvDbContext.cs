@@ -1,5 +1,4 @@
-﻿using CsvHelper.Configuration;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -20,11 +19,11 @@ namespace Arex388.Extensions.CsvHelper {
             _csvDbSets = GetType().GetProperties().Where(
                 p => typeof(ICsvDbSet).IsAssignableFrom(p.PropertyType)).ToList();
 
-            var classMaps = GetType().Assembly.GetTypes().Where(
-                t => t.BaseType?.BaseType == typeof(ClassMap)).ToList();
+            var csvMaps = GetType().Assembly.GetTypes().Where(
+                t => typeof(ICsvMap).IsAssignableFrom(t.BaseType)).ToList();
 
             foreach (var csvDbSet in _csvDbSets) {
-                var instance = Activator.CreateInstance(csvDbSet.PropertyType, options, classMaps);
+                var instance = Activator.CreateInstance(csvDbSet.PropertyType, options, csvMaps);
 
                 csvDbSet.SetValue(this, instance);
             }
