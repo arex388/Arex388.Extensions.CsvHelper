@@ -18,7 +18,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <DocumentationFile>E:\Software Development\Arex388\Arex388.Extensions.CsvHelper\Arex388.Extensions.CsvHelper.xml</DocumentationFile>
+    <DocumentationFile>E:\Software Development\Arex388.Extensions.CsvHelper\Arex388.Extensions.CsvHelper.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
